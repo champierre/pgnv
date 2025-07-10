@@ -294,7 +294,7 @@ Return ONLY the PGN format with comments after every move:`;
                     messages: [
                         {
                             role: 'system',
-                            content: 'You are a chess expert who converts chess game notation into properly formatted PGN with detailed commentary. You must add insightful comments after every single move explaining the strategic purpose and chess theory behind each move.'
+                            content: this.systemPromptInput.value.trim() || this.getDefaultSystemPrompt()
                         },
                         {
                             role: 'user',

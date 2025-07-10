@@ -125,7 +125,7 @@ h1 {
 }
 
 .btn-loading {
-    display: none !important;
+    display: none;
 }
 
 .btn-primary, .btn-secondary {
