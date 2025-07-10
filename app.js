@@ -1,9 +1,10 @@
 class PGNViewer {
     constructor() {
-        this.chess = new Chess();
-        this.moves = [];
+        this.game = new Chess();
+        this.board = null;
+        this.pgn = null;
         this.currentMoveIndex = -1;
-        this.gameInfo = {};
+        this.moves = [];
         
         this.initializeElements();
         this.initializeBoard();
@@ -13,9 +14,9 @@ class PGNViewer {
     initializeElements() {
         this.pgnInput = document.getElementById('pgn-input');
         this.loadButton = document.getElementById('load-pgn');
-        this.boardElement = document.getElementById('chess-board');
         this.gameInfoElement = document.getElementById('game-info');
         this.moveListElement = document.getElementById('move-list');
+        this.statusElement = document.getElementById('status');
         
         this.btnStart = document.getElementById('btn-start');
         this.btnPrev = document.getElementById('btn-prev');
@@ -24,43 +25,16 @@ class PGNViewer {
     }
 
     initializeBoard() {
-        this.boardElement.innerHTML = this.createBoardSVG();
-        this.updateBoard();
-    }
-
-    createBoardSVG() {
-        const size = 400;
-        const squareSize = size / 8;
+        const config = {
+            draggable: false,
+            position: 'start',
+            pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png'
+        };
         
-        let svg = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">`;
+        this.board = Chessboard('chess-board', config);
         
-        // Draw squares
-        for (let row = 0; row < 8; row++) {
-            for (let col = 0; col < 8; col++) {
-                const x = col * squareSize;
-                const y = row * squareSize;
-                const isLight = (row + col) % 2 === 0;
-                const color = isLight ? '#f0d9b5' : '#b58863';
-                
-                svg += `<rect x="${x}" y="${y}" width="${squareSize}" height="${squareSize}" fill="${color}" />`;
-            }
-        }
-        
-        // File labels (a-h)
-        const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-        files.forEach((file, i) => {
-            svg += `<text x="${i * squareSize + squareSize/2}" y="${size - 2}" 
-                    text-anchor="middle" font-size="12" fill="#666">${file}</text>`;
-        });
-        
-        // Rank labels (1-8)
-        for (let i = 0; i < 8; i++) {
-            svg += `<text x="2" y="${(7-i) * squareSize + squareSize/2 + 4}" 
-                    font-size="12" fill="#666">${i + 1}</text>`;
-        }
-        
-        svg += '</svg>';
-        return svg;
+        // Resize board on window resize
+        $(window).resize(() => this.board.resize());
     }
 
     attachEventListeners() {
@@ -74,15 +48,19 @@ class PGNViewer {
         document.addEventListener('keydown', (e) => {
             switch(e.key) {
                 case 'ArrowLeft':
+                    e.preventDefault();
                     this.previousMove();
                     break;
                 case 'ArrowRight':
+                    e.preventDefault();
                     this.nextMove();
                     break;
                 case 'Home':
+                    e.preventDefault();
                     this.goToStart();
                     break;
                 case 'End':
+                    e.preventDefault();
                     this.goToEnd();
                     break;
             }
@@ -90,34 +68,36 @@ class PGNViewer {
     }
 
     loadPGN() {
-        const pgn = this.pgnInput.value.trim();
-        if (!pgn) return;
+        const pgnText = this.pgnInput.value.trim();
+        if (!pgnText) {
+            alert('Please enter a PGN to load');
+            return;
+        }
 
         try {
-            // Parse PGN
-            this.chess.reset();
+            // Reset game
+            this.game.reset();
             
-            // Extract game info from headers
-            this.gameInfo = this.extractGameInfo(pgn);
-            this.displayGameInfo();
-            
-            // Load the game
-            const loaded = this.chess.loadPgn(pgn);
-            if (!loaded) {
+            // Load PGN
+            const result = this.game.load_pgn(pgnText);
+            if (!result) {
                 alert('Invalid PGN format');
                 return;
             }
             
-            // Get all moves
-            this.moves = this.chess.history({ verbose: true });
+            // Store PGN data
+            this.pgn = pgnText;
+            this.moves = this.game.history({ verbose: true });
             
             // Reset to starting position
-            this.chess.reset();
+            this.game.reset();
             this.currentMoveIndex = -1;
+            this.board.position(this.game.fen());
             
-            // Update display
-            this.updateBoard();
+            // Display game info and moves
+            this.displayGameInfo();
             this.displayMoveList();
+            this.updateStatus();
             this.updateNavigationButtons();
             
         } catch (error) {
@@ -125,36 +105,33 @@ class PGNViewer {
         }
     }
 
-    extractGameInfo(pgn) {
-        const info = {};
-        const headerRegex = /\[(\w+)\s+"([^"]+)"\]/g;
-        let match;
-        
-        while ((match = headerRegex.exec(pgn)) !== null) {
-            info[match[1]] = match[2];
-        }
-        
-        return info;
-    }
-
     displayGameInfo() {
+        const headers = this.game.header();
         let infoHtml = '<h3>Game Information</h3>';
         
-        if (this.gameInfo.White && this.gameInfo.Black) {
-            infoHtml += `<p><strong>White:</strong> ${this.gameInfo.White}</p>`;
-            infoHtml += `<p><strong>Black:</strong> ${this.gameInfo.Black}</p>`;
+        if (headers.White && headers.Black) {
+            infoHtml += `<p><strong>White:</strong> ${headers.White}</p>`;
+            infoHtml += `<p><strong>Black:</strong> ${headers.Black}</p>`;
         }
         
-        if (this.gameInfo.Event) {
-            infoHtml += `<p><strong>Event:</strong> ${this.gameInfo.Event}</p>`;
+        if (headers.Event) {
+            infoHtml += `<p><strong>Event:</strong> ${headers.Event}</p>`;
         }
         
-        if (this.gameInfo.Date) {
-            infoHtml += `<p><strong>Date:</strong> ${this.gameInfo.Date}</p>`;
+        if (headers.Date) {
+            infoHtml += `<p><strong>Date:</strong> ${headers.Date}</p>`;
         }
         
-        if (this.gameInfo.Result) {
-            infoHtml += `<p><strong>Result:</strong> ${this.gameInfo.Result}</p>`;
+        if (headers.Result) {
+            infoHtml += `<p><strong>Result:</strong> ${headers.Result}</p>`;
+        }
+        
+        if (headers.ECO) {
+            infoHtml += `<p><strong>ECO:</strong> ${headers.ECO}</p>`;
+        }
+        
+        if (headers.Opening) {
+            infoHtml += `<p><strong>Opening:</strong> ${headers.Opening}</p>`;
         }
         
         this.gameInfoElement.innerHTML = infoHtml;
@@ -188,20 +165,22 @@ class PGNViewer {
     }
 
     goToStart() {
-        this.chess.reset();
+        this.game.reset();
         this.currentMoveIndex = -1;
-        this.updateBoard();
+        this.board.position(this.game.fen());
+        this.updateStatus();
         this.updateNavigationButtons();
         this.highlightCurrentMove();
     }
 
     goToEnd() {
-        this.chess.reset();
+        this.game.reset();
         for (let i = 0; i < this.moves.length; i++) {
-            this.chess.move(this.moves[i]);
+            this.game.move(this.moves[i]);
         }
         this.currentMoveIndex = this.moves.length - 1;
-        this.updateBoard();
+        this.board.position(this.game.fen());
+        this.updateStatus();
         this.updateNavigationButtons();
         this.highlightCurrentMove();
     }
@@ -216,8 +195,9 @@ class PGNViewer {
     nextMove() {
         if (this.currentMoveIndex < this.moves.length - 1) {
             this.currentMoveIndex++;
-            this.chess.move(this.moves[this.currentMoveIndex]);
-            this.updateBoard();
+            this.game.move(this.moves[this.currentMoveIndex]);
+            this.board.position(this.game.fen());
+            this.updateStatus();
             this.updateNavigationButtons();
             this.highlightCurrentMove();
         }
@@ -231,11 +211,12 @@ class PGNViewer {
     }
 
     replayToMove(moveIndex) {
-        this.chess.reset();
+        this.game.reset();
         for (let i = 0; i <= moveIndex; i++) {
-            this.chess.move(this.moves[i]);
+            this.game.move(this.moves[i]);
         }
-        this.updateBoard();
+        this.board.position(this.game.fen());
+        this.updateStatus();
         this.updateNavigationButtons();
         this.highlightCurrentMove();
     }
@@ -244,65 +225,35 @@ class PGNViewer {
         this.moveListElement.querySelectorAll('.move').forEach((el, index) => {
             if (index === this.currentMoveIndex) {
                 el.classList.add('current-move');
+                // Scroll into view if needed
+                el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
             } else {
                 el.classList.remove('current-move');
             }
         });
     }
 
-    updateBoard() {
-        const svg = this.boardElement.querySelector('svg');
-        // Remove existing pieces
-        svg.querySelectorAll('.piece').forEach(el => el.remove());
+    updateStatus() {
+        let status = '';
         
-        const board = this.chess.board();
-        const squareSize = 400 / 8;
+        if (this.currentMoveIndex >= 0 && this.currentMoveIndex < this.moves.length) {
+            const move = this.moves[this.currentMoveIndex];
+            const moveNum = Math.floor(this.currentMoveIndex / 2) + 1;
+            const isWhite = this.currentMoveIndex % 2 === 0;
+            status = `Move ${moveNum}${isWhite ? '' : '...'} ${move.san}`;
+        } else if (this.currentMoveIndex === -1) {
+            status = 'Starting position';
+        }
         
-        board.forEach((row, rowIndex) => {
-            row.forEach((piece, colIndex) => {
-                if (piece) {
-                    const x = colIndex * squareSize + squareSize / 2;
-                    const y = rowIndex * squareSize + squareSize / 2;
-                    
-                    const pieceSymbol = this.getPieceUnicode(piece);
-                    const pieceElement = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                    pieceElement.setAttribute('x', x);
-                    pieceElement.setAttribute('y', y + 10);
-                    pieceElement.setAttribute('text-anchor', 'middle');
-                    pieceElement.setAttribute('font-size', '36');
-                    pieceElement.setAttribute('class', 'piece');
-                    pieceElement.setAttribute('fill', piece.color === 'w' ? '#fff' : '#000');
-                    pieceElement.setAttribute('stroke', piece.color === 'w' ? '#000' : '#fff');
-                    pieceElement.setAttribute('stroke-width', '1');
-                    pieceElement.textContent = pieceSymbol;
-                    
-                    svg.appendChild(pieceElement);
-                }
-            });
-        });
-    }
-
-    getPieceUnicode(piece) {
-        const unicodePieces = {
-            'w': {
-                'k': '♔',
-                'q': '♕',
-                'r': '♖',
-                'b': '♗',
-                'n': '♘',
-                'p': '♙'
-            },
-            'b': {
-                'k': '♚',
-                'q': '♛',
-                'r': '♜',
-                'b': '♝',
-                'n': '♞',
-                'p': '♟'
-            }
-        };
+        if (this.game.in_checkmate()) {
+            status += ' - Checkmate!';
+        } else if (this.game.in_draw()) {
+            status += ' - Draw!';
+        } else if (this.game.in_check()) {
+            status += ' - Check!';
+        }
         
-        return unicodePieces[piece.color][piece.type];
+        this.statusElement.textContent = status;
     }
 
     updateNavigationButtons() {
@@ -314,6 +265,6 @@ class PGNViewer {
 }
 
 // Initialize the viewer when page loads
-document.addEventListener('DOMContentLoaded', () => {
+$(document).ready(() => {
     new PGNViewer();
 });
