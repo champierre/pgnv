@@ -12,8 +12,13 @@ class PGNViewer {
     }
 
     initializeElements() {
+        this.pgnModal = document.getElementById('pgn-modal');
         this.pgnInput = document.getElementById('pgn-input');
         this.loadButton = document.getElementById('load-pgn');
+        this.cancelButton = document.getElementById('cancel-pgn');
+        this.openDialogButton = document.getElementById('open-pgn-dialog');
+        this.viewerSection = document.querySelector('.viewer-section');
+        
         this.gameInfoElement = document.getElementById('game-info');
         this.moveListElement = document.getElementById('move-list');
         this.statusElement = document.getElementById('status');
@@ -39,13 +44,31 @@ class PGNViewer {
 
     attachEventListeners() {
         this.loadButton.addEventListener('click', () => this.loadPGN());
+        this.cancelButton.addEventListener('click', () => this.closeModal());
+        this.openDialogButton.addEventListener('click', () => this.openModal());
+        
         this.btnStart.addEventListener('click', () => this.goToStart());
         this.btnPrev.addEventListener('click', () => this.previousMove());
         this.btnNext.addEventListener('click', () => this.nextMove());
         this.btnEnd.addEventListener('click', () => this.goToEnd());
         
+        // Close modal on outside click
+        this.pgnModal.addEventListener('click', (e) => {
+            if (e.target === this.pgnModal) {
+                this.closeModal();
+            }
+        });
+        
         // Keyboard navigation
         document.addEventListener('keydown', (e) => {
+            // Don't handle navigation keys when modal is open
+            if (!this.pgnModal.classList.contains('hidden')) {
+                if (e.key === 'Escape') {
+                    this.closeModal();
+                }
+                return;
+            }
+            
             switch(e.key) {
                 case 'ArrowLeft':
                     e.preventDefault();
@@ -65,6 +88,15 @@ class PGNViewer {
                     break;
             }
         });
+    }
+    
+    openModal() {
+        this.pgnModal.classList.remove('hidden');
+        this.pgnInput.focus();
+    }
+    
+    closeModal() {
+        this.pgnModal.classList.add('hidden');
     }
 
     loadPGN() {
@@ -99,6 +131,10 @@ class PGNViewer {
             this.displayMoveList();
             this.updateStatus();
             this.updateNavigationButtons();
+            
+            // Close modal and show viewer
+            this.closeModal();
+            this.viewerSection.style.display = 'grid';
             
         } catch (error) {
             alert('Error loading PGN: ' + error.message);

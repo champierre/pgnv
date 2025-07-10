@@ -8,12 +8,10 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <h1>PGN Viewer</h1>
-        
-        <div class="pgn-input-section">
+    <div class="modal-overlay" id="pgn-modal">
+        <div class="modal-content">
             <h2>Paste PGN here:</h2>
-            <textarea id="pgn-input" rows="10" cols="60" placeholder="[Event &quot;Example Game&quot;]
+            <textarea id="pgn-input" rows="12" cols="60" placeholder="[Event &quot;Example Game&quot;]
 [Site &quot;?&quot;]
 [Date &quot;2024.01.01&quot;]
 [White &quot;Player 1&quot;]
@@ -21,10 +19,21 @@
 [Result &quot;1-0&quot;]
 
 1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Be7 1-0"></textarea>
-            <button id="load-pgn">Load PGN</button>
+            <div class="modal-buttons">
+                <button id="load-pgn" class="btn-primary">Load PGN</button>
+                <button id="cancel-pgn" class="btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>PGN Viewer</h1>
+        
+        <div class="toolbar">
+            <button id="open-pgn-dialog" class="btn-primary">Load New PGN</button>
         </div>
 
-        <div class="viewer-section">
+        <div class="viewer-section" style="display: none;">
             <div class="game-info" id="game-info"></div>
             
             <div class="board-container">
