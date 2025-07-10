@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PGN Viewer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>PGN Viewer</h1>
+        
+        <div class="pgn-input-section">
+            <h2>Paste PGN here:</h2>
+            <textarea id="pgn-input" rows="10" cols="60" placeholder="[Event &quot;Example Game&quot;]
+[Site &quot;?&quot;]
+[Date &quot;2024.01.01&quot;]
+[White &quot;Player 1&quot;]
+[Black &quot;Player 2&quot;]
+[Result &quot;1-0&quot;]
+
+1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Be7 1-0"></textarea>
+            <button id="load-pgn">Load PGN</button>
+        </div>
+
+        <div class="viewer-section">
+            <div class="game-info" id="game-info"></div>
+            
+            <div class="board-container">
+                <div id="chess-board"></div>
+                
+                <div class="controls">
+                    <button id="btn-start" title="Go to start">⏮</button>
+                    <button id="btn-prev" title="Previous move">◀</button>
+                    <button id="btn-next" title="Next move">▶</button>
+                    <button id="btn-end" title="Go to end">⏭</button>
+                </div>
+            </div>
+            
+            <div class="move-list" id="move-list"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chess.js@1.4.0/dist/chess.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
