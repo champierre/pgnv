@@ -1,0 +1,94 @@
+[Event "World Chess Championship"]
+[Site "Dubai UAE"]
+[Date "2021.12.10"]
+[Round "6"]
+[White "Magnus Carlsen"]
+[Black "Ian Nepomniachtchi"]
+[Result "1-0"]
+[WhiteElo "2856"]
+[BlackElo "2782"]
+[Annotator "ChatGPT — fully commented in English"]
+[Opening "Ruy Lopez"]
+[ECO "C84"]
+[TimeControl "5400+30"]
+
+1. e4 {White stakes a claim in the centre and seeks early initiative.}
+   e5 {Black mirrors, contesting the centre.}
+2. Nf3 {Attacks e5 and develops quickly.}
+   Nc6 {Defends e5 and places the knight on an active square.}
+3. Bb5 {The Ruy Lopez: pressures the c6-knight, indirectly e5.}
+   a6 {Expels the bishop and gains queenside space.}
+4. Ba4 {Keeps pressure on c6 from safety.}
+   Nf6 {Hits e4 and prepares king safety.}
+5. O-O {King to safety; the rook eyes the e-file.}
+   Be7 {Completes development, ready to castle.}
+6. Re1 {Claims the e-file and bolsters e4.}
+   b5 {Chases the bishop again and grabs more space.}
+7. Bb3 {Maintains the powerful a2–g8 diagonal.}
+   d6 {Supports e5 and frees the dark-squared bishop.}
+8. c3 {Controls d4 and stops …b4.}
+   O-O {Black castles.}
+9. h3 {Pre-empts the pin …Bg4.}
+   Na5 {Harasses the bishop and eyes the c4 outpost.}
+10. Bc2 {Retreats safely, still pointing at h7.}
+    c5 {Clamps the centre and gains space.}
+11. d4 {White finally strikes in the middle.}
+    Qc7 {Steps out of a potential pin and supports c-file ideas.}
+12. Nbd2 {Adds support to e4/d4 and improves coordination.}
+    Bd7 {Covers the c6-knight and connects rooks.}
+13. Nf1 {Re-routes toward g3/e3 and opens the c1-bishop.}
+    Rac8 {Occupies the semi-open c-file, eyeing …cxd4.}
+14. d5 {Locks the centre and seizes space.}
+    c4 {Queenside space and opens the bishop’s diagonal.}
+15. g4 {Launches kingside expansion.}
+    Nb7 {Re-routes the knight to buttress c5/e5.}
+16. Ng3 {Accelerates the kingside assault.}
+    Nc5 {Targets the bishop and central squares.}
+17. Nf5 {Menaces forks on e7 and g7, grabbing space.}
+    Rfe8 {Over-protects e7 and keeps the rook flexible.}
+18. N3h4 {Preserves the attacking knight and eyes the h-file.}
+    Bf8 {Fortifies the king; bishop becomes a defender.}
+19. Qf3 {Queen joins the attack with latent mating threats.}
+    Qd8 {Offers a queen trade to relieve pressure.}
+20. g5 {Gains more space and chases the f6-knight.}
+    g6 {Creates a retreat square and shores up dark squares.}
+21. Nh6+ {Check that disrupts the pawn shield and opens lines.}
+    Bxh6 {Eliminates the dangerous knight.}
+22. Qxf6 {Recovers material and keeps pressure.}
+    Qxf6 {Accepts the queen exchange to simplify.}
+23. gxf6 {Creates a powerful passed pawn on f6.}
+    Bf8 {Returns the bishop to bolster the dark squares.}
+24. Kh2 {Tucks the king away; rook can later occupy g-file.}
+    a5 {Starts queenside counterplay.}
+25. a3 {Stops …b4 and strengthens the queenside.}
+    Rb8 {Lines up on the b-file for counterplay.}
+26. f4 {Prepares a central break and supports f5–f6 ideas.}
+    exf4 {Releases tension, grabbing a pawn—temporarily.}
+27. Bxf4 {Immediately recaptures, activating the bishop.}
+    h6 {Reinforces g5 and gives the king air.}
+28. Nf3 {Re-positions the knight and prepares rook coordination.}
+    Nd3 {Excellent outpost; hits the c1-bishop and eyes f4.}
+29. Bxd3 {Eliminates the intrusive knight.}
+    cxd3 {Creates a dangerous passed pawn on d3.}
+30. Rad1 {Rook behind the passer, blockading.}
+    b4?! {Continues queenside push but loosens control.}
+31. Rxd3 {Removes the passer and stabilises.}
+    bxc3 {Opens the bishop and keeps a far-advanced pawn.}
+32. Rxc3 {Recaptures and seizes the c-file.}
+    Rxb2+ {Recovers material while luring the king.}
+33. Kg3 {King sidesteps; rooks stay connected.}
+    Reb8 {Doubles rooks on the b-file, pressing.}
+34. Rec1 {Counters by doubling on the c-file.}
+    Ba4? {Aggressive but lacks real bite; a dubious choice.}
+35. Rc8 {Seizes the 8th rank and the initiative.}
+    R2b3? {Over-ambitious; weakens the back rank further.}
+36. R1c3 {Triples rooks, defending and increasing pressure.}
+    Rxc8 {Forced exchanges but Black remains down material.}
+37. Rxc8 {Keeps a rook on the 8th and the material edge.}
+    Bd7 {Last attempt to activate the bishop—too slow.}
+38. Rd8 {Discovered attack that wins more material; decisive.}
+    Ba4 {Desperation—no real threat.}
+39. Bxd6 {Removes the final hope; White is up material and position.}
+    1-0 {Black resigns: the passed pawns and rook activity are unstoppable.}
+
+{White wins with extra material and dominant pieces.}

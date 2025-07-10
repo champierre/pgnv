@@ -10,17 +10,20 @@
 <body>
     <div class="modal-overlay" id="pgn-modal">
         <div class="modal-content">
-            <h2>Paste PGN here:</h2>
-            <textarea id="pgn-input" rows="12" cols="60" placeholder="[Event &quot;Example Game&quot;]
-[Site &quot;?&quot;]
-[Date &quot;2024.01.01&quot;]
-[White &quot;Player 1&quot;]
-[Black &quot;Player 2&quot;]
-[Result &quot;1-0&quot;]
-
-1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Be7 1-0"></textarea>
+            <h2>Paste PGN or Chess Notation Text:</h2>
+            <textarea id="pgn-input" rows="12" cols="60" placeholder=""></textarea>
+            
+            <div class="api-section">
+                <label for="api-key-input">ChatGPT API Key (for notation conversion):</label>
+                <input type="password" id="api-key-input" placeholder="sk-..." />
+                <small>Your API key will be saved locally and only used for PGN conversion</small>
+            </div>
+            
             <div class="modal-buttons">
-                <button id="load-pgn" class="btn-primary">Load PGN</button>
+                <button id="load-pgn" class="btn-primary">
+                    <span class="btn-text">Load PGN</span>
+                    <span class="btn-loading" style="display: none;">Converting...</span>
+                </button>
                 <button id="cancel-pgn" class="btn-secondary">Cancel</button>
             </div>
         </div>
@@ -47,6 +50,7 @@
                 </div>
                 
                 <div class="status" id="status"></div>
+                <div class="move-comment" id="move-comment"></div>
             </div>
             
             <div class="move-list" id="move-list"></div>

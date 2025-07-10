@@ -75,11 +75,48 @@ h1 {
     box-shadow: 0 0 0 2px rgba(52,152,219,0.2);
 }
 
+.api-section {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.api-section label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.api-section input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.api-section input:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52,152,219,0.2);
+}
+
+.api-section small {
+    color: #7f8c8d;
+    font-size: 12px;
+}
+
 .modal-buttons {
     margin-top: 20px;
     display: flex;
     gap: 10px;
     justify-content: flex-end;
+}
+
+.btn-loading {
+    display: none !important;
 }
 
 .btn-primary, .btn-secondary {
@@ -98,6 +135,15 @@ h1 {
 
 .btn-primary:hover {
     background-color: #2980b9;
+}
+
+.btn-primary.convert-mode {
+    background-color: #e67e22;
+    border-color: #e67e22;
+}
+
+.btn-primary.convert-mode:hover {
+    background-color: #d68910;
 }
 
 .btn-secondary {
@@ -197,6 +243,32 @@ h1 {
     font-weight: 500;
     color: #2c3e50;
     min-height: 24px;
+    margin-bottom: 10px;
+}
+
+.move-comment {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 12px;
+    margin-top: 10px;
+    min-height: 50px;
+    max-height: 120px;
+    overflow-y: auto;
+}
+
+.comment-content {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #495057;
+}
+
+.comment-content strong {
+    color: #2c3e50;
+}
+
+.comment-content em {
+    color: #6c757d;
 }
 
 .moves {
@@ -227,6 +299,17 @@ h1 {
 .move.current-move {
     background-color: #3498db;
     color: white;
+}
+
+.move.has-comment {
+    font-weight: bold;
+    border-bottom: 2px dotted #e67e22;
+}
+
+.move.has-comment:hover {
+    background-color: #f39c12;
+    color: white;
+    cursor: help;
 }
 
 /* Responsive design */
