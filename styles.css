@@ -88,19 +88,28 @@ h1 {
     color: #2c3e50;
 }
 
-.api-section input {
+.api-section input,
+.api-section textarea {
     width: 100%;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 14px;
     margin-bottom: 8px;
+    font-family: inherit;
 }
 
-.api-section input:focus {
+.api-section input:focus,
+.api-section textarea:focus {
     outline: none;
     border-color: #3498db;
     box-shadow: 0 0 0 2px rgba(52,152,219,0.2);
+}
+
+.api-section textarea {
+    resize: vertical;
+    min-height: 80px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .api-section small {

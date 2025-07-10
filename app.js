@@ -15,6 +15,7 @@ class PGNViewer {
         this.pgnModal = document.getElementById('pgn-modal');
         this.pgnInput = document.getElementById('pgn-input');
         this.apiKeyInput = document.getElementById('api-key-input');
+        this.systemPromptInput = document.getElementById('system-prompt-input');
         this.loadButton = document.getElementById('load-pgn');
         this.cancelButton = document.getElementById('cancel-pgn');
         this.openDialogButton = document.getElementById('open-pgn-dialog');
@@ -33,8 +34,9 @@ class PGNViewer {
         this.btnNext = document.getElementById('btn-next');
         this.btnEnd = document.getElementById('btn-end');
         
-        // Load saved API key and set initial placeholder
+        // Load saved settings and set initial values
         this.loadApiKey();
+        this.loadSystemPrompt();
         this.pgnInput.placeholder = this.getDefaultPlaceholder();
     }
 
@@ -56,6 +58,7 @@ class PGNViewer {
         this.cancelButton.addEventListener('click', () => this.closeModal());
         this.openDialogButton.addEventListener('click', () => this.openModal());
         this.apiKeyInput.addEventListener('input', () => this.saveApiKey());
+        this.systemPromptInput.addEventListener('input', () => this.saveSystemPrompt());
         this.pgnInput.addEventListener('input', () => this.onInputChange());
         
         this.btnStart.addEventListener('click', () => this.goToStart());
@@ -126,6 +129,84 @@ class PGNViewer {
         } else {
             localStorage.removeItem('pgn-viewer-api-key');
         }
+    }
+    
+    loadSystemPrompt() {
+        const savedPrompt = localStorage.getItem('pgn-viewer-system-prompt');
+        if (savedPrompt) {
+            this.systemPromptInput.value = savedPrompt;
+        } else {
+            // Set default system prompt based on browser language
+            this.systemPromptInput.value = this.getDefaultSystemPrompt();
+        }
+    }
+    
+    saveSystemPrompt() {
+        const prompt = this.systemPromptInput.value.trim();
+        if (prompt) {
+            localStorage.setItem('pgn-viewer-system-prompt', prompt);
+        } else {
+            localStorage.removeItem('pgn-viewer-system-prompt');
+        }
+    }
+    
+    getDefaultSystemPrompt() {
+        // Detect browser language
+        const language = navigator.language || navigator.userLanguage || 'en';
+        const languageCode = language.toLowerCase().substring(0, 2);
+        
+        let languageName;
+        let sampleComment;
+        
+        switch (languageCode) {
+            case 'ja':
+                languageName = 'Japanese';
+                sampleComment = '白は中心を支配し、攻撃的な展開を狙う。';
+                break;
+            case 'es':
+                languageName = 'Spanish';
+                sampleComment = 'Las blancas dominan el centro y buscan desarrollo agresivo.';
+                break;
+            case 'fr':
+                languageName = 'French';
+                sampleComment = 'Les blancs dominent le centre et cherchent un développement agressif.';
+                break;
+            case 'de':
+                languageName = 'German';
+                sampleComment = 'Weiß dominiert das Zentrum und strebt aggressive Entwicklung an.';
+                break;
+            case 'it':
+                languageName = 'Italian';
+                sampleComment = 'Il bianco domina il centro e cerca uno sviluppo aggressivo.';
+                break;
+            case 'pt':
+                languageName = 'Portuguese';
+                sampleComment = 'As brancas dominam o centro e buscam desenvolvimento agressivo.';
+                break;
+            case 'ru':
+                languageName = 'Russian';
+                sampleComment = 'Белые доминируют в центре и стремятся к агрессивному развитию.';
+                break;
+            case 'zh':
+                languageName = 'Chinese';
+                sampleComment = '白方控制中心，寻求积极发展。';
+                break;
+            case 'ko':
+                languageName = 'Korean';
+                sampleComment = '백은 중앙을 지배하고 공격적인 전개를 추구한다.';
+                break;
+            default:
+                languageName = 'English';
+                sampleComment = 'White dominates the center and seeks aggressive development.';
+        }
+        
+        return `You are a chess expert who converts chess game notation into properly formatted PGN with detailed commentary. You must add insightful comments after every single move explaining the strategic purpose and chess theory behind each move.
+
+IMPORTANT: Write all move comments in ${languageName}. Each comment should explain the move's purpose, strategy, or positional considerations in ${languageName}.
+
+Example comment format: {${sampleComment}}
+
+Focus on making the comments educational and accessible to chess players who speak ${languageName}.`;
     }
     
     isChessBookNotation(text) {
@@ -443,35 +524,147 @@ Return ONLY the PGN format with comments after every move:`;
     }
 
     displayGameInfo() {
-        const headers = this.game.header();
+        // Extract headers from the original PGN text for more comprehensive info
+        const headers = this.extractPGNHeaders(this.originalPGN || this.pgn);
+        
         let infoHtml = '<h3>Game Information</h3>';
         
-        if (headers.White && headers.Black) {
-            infoHtml += `<p><strong>White:</strong> ${headers.White}</p>`;
-            infoHtml += `<p><strong>Black:</strong> ${headers.Black}</p>`;
-        }
-        
+        // Primary game info
         if (headers.Event) {
             infoHtml += `<p><strong>Event:</strong> ${headers.Event}</p>`;
+        }
+        
+        if (headers.Site) {
+            infoHtml += `<p><strong>Site:</strong> ${headers.Site}</p>`;
         }
         
         if (headers.Date) {
             infoHtml += `<p><strong>Date:</strong> ${headers.Date}</p>`;
         }
         
+        if (headers.Round) {
+            infoHtml += `<p><strong>Round:</strong> ${headers.Round}</p>`;
+        }
+        
+        // Players
+        if (headers.White && headers.Black) {
+            infoHtml += `<p><strong>White:</strong> ${headers.White}</p>`;
+            if (headers.WhiteElo) {
+                infoHtml += `<p><strong>White Elo:</strong> ${headers.WhiteElo}</p>`;
+            }
+            infoHtml += `<p><strong>Black:</strong> ${headers.Black}</p>`;
+            if (headers.BlackElo) {
+                infoHtml += `<p><strong>Black Elo:</strong> ${headers.BlackElo}</p>`;
+            }
+        }
+        
+        // Game result
         if (headers.Result) {
-            infoHtml += `<p><strong>Result:</strong> ${headers.Result}</p>`;
+            infoHtml += `<p><strong>Result:</strong> ${this.formatResult(headers.Result)}</p>`;
+        }
+        
+        // Opening information
+        if (headers.Opening) {
+            infoHtml += `<p><strong>Opening:</strong> ${headers.Opening}</p>`;
         }
         
         if (headers.ECO) {
             infoHtml += `<p><strong>ECO:</strong> ${headers.ECO}</p>`;
         }
         
-        if (headers.Opening) {
-            infoHtml += `<p><strong>Opening:</strong> ${headers.Opening}</p>`;
+        if (headers.Variation) {
+            infoHtml += `<p><strong>Variation:</strong> ${headers.Variation}</p>`;
+        }
+        
+        // Time control
+        if (headers.TimeControl) {
+            infoHtml += `<p><strong>Time Control:</strong> ${this.formatTimeControl(headers.TimeControl)}</p>`;
+        }
+        
+        // Additional information
+        if (headers.Annotator) {
+            infoHtml += `<p><strong>Annotator:</strong> ${headers.Annotator}</p>`;
+        }
+        
+        if (headers.Source) {
+            infoHtml += `<p><strong>Source:</strong> ${headers.Source}</p>`;
+        }
+        
+        if (headers.PlyCount) {
+            const moveCount = Math.ceil(parseInt(headers.PlyCount) / 2);
+            infoHtml += `<p><strong>Moves:</strong> ${moveCount} (${headers.PlyCount} plies)</p>`;
         }
         
         this.gameInfoElement.innerHTML = infoHtml;
+    }
+    
+    extractPGNHeaders(pgn) {
+        const headers = {};
+        if (!pgn) return headers;
+        
+        // Split into lines and find header lines
+        const lines = pgn.split('\n');
+        
+        for (const line of lines) {
+            const trimmedLine = line.trim();
+            if (trimmedLine.startsWith('[') && trimmedLine.endsWith(']')) {
+                const match = trimmedLine.match(/\[(\w+)\s+"([^"]*)"\]/);
+                if (match) {
+                    headers[match[1]] = match[2];
+                }
+            }
+        }
+        
+        return headers;
+    }
+    
+    formatResult(result) {
+        switch (result) {
+            case '1-0':
+                return '1-0 (White wins)';
+            case '0-1':
+                return '0-1 (Black wins)';
+            case '1/2-1/2':
+                return '1/2-1/2 (Draw)';
+            case '*':
+                return '* (Game in progress)';
+            default:
+                return result;
+        }
+    }
+    
+    formatTimeControl(timeControl) {
+        // Parse common time control formats
+        if (timeControl.includes('+')) {
+            const parts = timeControl.split('+');
+            if (parts.length === 2) {
+                const baseTime = parseInt(parts[0]);
+                const increment = parseInt(parts[1]);
+                const baseMinutes = Math.floor(baseTime / 60);
+                const baseSeconds = baseTime % 60;
+                
+                if (baseSeconds === 0) {
+                    return `${baseMinutes} minutes + ${increment} seconds per move`;
+                } else {
+                    return `${baseMinutes}:${baseSeconds.toString().padStart(2, '0')} + ${increment} seconds per move`;
+                }
+            }
+        }
+        
+        // Try to parse as seconds
+        const seconds = parseInt(timeControl);
+        if (!isNaN(seconds)) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            
+            if (remainingSeconds === 0) {
+                return `${minutes} minutes`;
+            } else {
+                return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+            }
+        }
+        
+        return timeControl; // Return as-is if we can't parse it
     }
 
     displayMoveList() {
