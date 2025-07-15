@@ -33,6 +33,7 @@ class PGNViewer {
         this.btnPrev = document.getElementById('btn-prev');
         this.btnNext = document.getElementById('btn-next');
         this.btnEnd = document.getElementById('btn-end');
+        this.btnFlip = document.getElementById('btn-flip');
         
         // Load saved settings and set initial values
         this.loadApiKey();
@@ -65,6 +66,7 @@ class PGNViewer {
         this.btnPrev.addEventListener('click', () => this.previousMove());
         this.btnNext.addEventListener('click', () => this.nextMove());
         this.btnEnd.addEventListener('click', () => this.goToEnd());
+        this.btnFlip.addEventListener('click', () => this.flipBoard());
         
         // Close modal on outside click
         this.pgnModal.addEventListener('click', (e) => {
@@ -859,6 +861,10 @@ Return ONLY the PGN format with comments after every move:`;
         this.btnPrev.disabled = this.currentMoveIndex < 0;
         this.btnNext.disabled = this.currentMoveIndex >= this.moves.length - 1;
         this.btnEnd.disabled = this.currentMoveIndex >= this.moves.length - 1;
+    }
+    
+    flipBoard() {
+        this.board.flip();
     }
     
     updateMoveComment() {
