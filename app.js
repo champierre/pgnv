@@ -814,11 +814,19 @@ Return ONLY the PGN format with comments after every move:`;
     highlightCurrentMove() {
         this.moveListElement.querySelectorAll('.move').forEach((el, index) => {
             if (index === this.currentMoveIndex) {
-                el.classList.add('current-move');
+                // Determine if this is a white move (even index) or black move (odd index)
+                const isWhiteMove = index % 2 === 0;
+                
+                if (isWhiteMove) {
+                    el.classList.add('current-move-white');
+                } else {
+                    el.classList.add('current-move-black');
+                }
+                
                 // Scroll into view if needed
                 el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
             } else {
-                el.classList.remove('current-move');
+                el.classList.remove('current-move', 'current-move-white', 'current-move-black');
             }
         });
     }
