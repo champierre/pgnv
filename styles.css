@@ -310,6 +310,19 @@ h1 {
     color: white;
 }
 
+/* White moves get black highlighting */
+.move.current-move-white {
+    background-color: #000000;
+    color: white;
+}
+
+/* Black moves get white highlighting */
+.move.current-move-black {
+    background-color: #ffffff;
+    color: black;
+    border: 1px solid #ccc;
+}
+
 .move.has-comment {
     font-weight: bold;
     border-bottom: 2px dotted #e67e22;
